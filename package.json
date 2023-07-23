@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
+    "lint": "eslint src --ext .ts --fix",
+    "build": "tsc"
+  },
   "dependencies": {
     "@prisma/client": "^5.0.0",
     "cors": "^2.8.5",
