@@ -22,4 +22,16 @@ export class TestimonialRepository {
       include: { user: true },
     })
   }
+
+  static async getRandom(): Promise<ITestimonial[]> {
+    return await prisma.$queryRaw<ITestimonial[]>`
+    SELECT
+    T.*,
+    json_build_object('id', u.id, 'name', u.name, 'image', u.image) as user
+    FROM "Testimonial" as T
+    JOIN "User" as U ON T."userId" = U."id"
+    ORDER BY RANDOM()
+    LIMIT 3;
+    `
+  }
 }

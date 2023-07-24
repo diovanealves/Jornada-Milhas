@@ -36,4 +36,13 @@ router.get('/depoimentos/:id', async (req: Request, res: Response) => {
   }
 })
 
+router.get('/depoimentos-home', async (req: Request, res: Response) => {
+  try {
+    const testimonials = await TestimonialService.getRandom()
+    return res.json(testimonials)
+  } catch (err) {
+    return res.status(500).json({ err: 'Erro ao obter os depoimentos' })
+  }
+})
+
 export default router

@@ -15,4 +15,8 @@ export class TestimonialService {
   static async getById(id: string): Promise<ITestimonial | null> {
     return TestimonialRepository.getById(id)
   }
+
+  static async getRandom(): Promise<ITestimonial[]> {
+    return TestimonialRepository.getRandom()
+  }
 }
