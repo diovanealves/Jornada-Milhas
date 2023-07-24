@@ -10,7 +10,7 @@ router.post('/depoimentos', async (req: Request, res: Response) => {
     const newTestimonial = await TestimonialService.create(testimonialData)
     return res.status(201).json(newTestimonial)
   } catch (err) {
-    return res.status(500).json({ err: 'Erro ao criar depoimento' })
+    return res.status(500).send('Erro ao criar depoimento')
   }
 })
 
@@ -19,7 +19,7 @@ router.get('/depoimentos', async (req: Request, res: Response) => {
     const testimonials = await TestimonialService.getAll()
     return res.json(testimonials)
   } catch (err) {
-    return res.status(500).json({ err: 'Erro ao obter os depoimentos' })
+    return res.status(500).send({ err: 'Erro ao obter os depoimentos' })
   }
 })
 
@@ -54,11 +54,11 @@ router.put('/depoimentos/:id', async (req: Request, res: Response) => {
       testimonialData,
     )
     if (!updatedTestimonial) {
-      return res.status(404).send('Depoimento não encontrado')
+      return res.status(404).json({ err: 'Depoimento não encontrado' })
     }
     return res.json(updatedTestimonial)
   } catch (err) {
-    return res.status(500).send('Erro ao atualizar o depoimento')
+    return res.status(500).json({ err: 'Erro ao atualizar o depoimento' })
   }
 })
 
@@ -67,11 +67,11 @@ router.delete('/depoimentos/:id', async (req: Request, res: Response) => {
   try {
     const deletedTestimonial = await TestimonialService.delete(id)
     if (!deletedTestimonial) {
-      return res.status(404).send('Depoimento não encontrado')
+      return res.status(404).json({ err: 'Depoimento não encontrado' })
     }
     return res.json(deletedTestimonial)
   } catch (err) {
-    return res.status(500).send('Erro ao deletar o depoimento')
+    return res.status(500).json({ err: 'Erro ao deletar o depoimento' })
   }
 })
 

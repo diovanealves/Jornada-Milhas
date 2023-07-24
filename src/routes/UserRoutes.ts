@@ -42,11 +42,11 @@ router.put('/usuario/:id', async (req: Request, res: Response) => {
   try {
     const updatedUser = await UserService.update(id, userData)
     if (!updatedUser) {
-      return res.status(404).send('Usuário não encontrado')
+      return res.status(404).json({ err: 'Usuário não encontrado' })
     }
-    return res.status(201).json(updatedUser)
+    return res.json(updatedUser)
   } catch (err) {
-    return res.status(500).send('Erro ao atualizar o usuário.')
+    return res.status(500).json({ err: 'Erro ao atualizar o usuário' })
   }
 })
 
@@ -55,11 +55,11 @@ router.delete('/usuario/:id', async (req: Request, res: Response) => {
   try {
     const deletedUser = await UserService.delete(id)
     if (!deletedUser) {
-      return res.status(404).send('Usuário não encontrado')
+      return res.status(404).json({ err: 'Usuário não encontrado' })
     }
-    return res.status(200).json(deletedUser)
+    return res.json(deletedUser)
   } catch (err) {
-    return res.status(500).send('Erro ao deletar o usuário.')
+    return res.status(500).json({ err: 'Erro ao deletar o usuário.' })
   }
 })
 
