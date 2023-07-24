@@ -5,7 +5,7 @@ export interface ITestimonial {
   description: string
   createdAt: Date
   userId: string
-  user: IUser
+  user?: IUser
 }
 
 export interface ITestimonialCreate {
