@@ -1,5 +1,9 @@
 import { prisma } from '../lib/prisma'
-import { ITestimonial, ITestimonialCreate } from '../models/Testimonial'
+import {
+  ITestimonial,
+  ITestimonialCreate,
+  ITestimonialUpdate,
+} from '../models/Testimonial'
 
 export class TestimonialRepository {
   static async create(
@@ -24,7 +28,7 @@ export class TestimonialRepository {
   }
 
   static async getRandom(): Promise<ITestimonial[]> {
-    return await prisma.$queryRaw<ITestimonial[]>`
+    return prisma.$queryRaw<ITestimonial[]>`
     SELECT
     T.*,
     json_build_object('id', u.id, 'name', u.name, 'image', u.image) as user
@@ -33,5 +37,12 @@ export class TestimonialRepository {
     ORDER BY RANDOM()
     LIMIT 3;
     `
+  }
+
+  static async update(
+    id: string,
+    testimonialData: ITestimonialUpdate,
+  ): Promise<ITestimonialUpdate> {
+    return prisma.testimonial.update({ where: { id }, data: testimonialData })
   }
 }
