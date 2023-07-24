@@ -19,6 +19,13 @@ app.use(
 app.use(userRoutes)
 app.use(testimonialRoutes)
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server is running on port: ${PORT}`)
 })
+
+const closeServer = () => {
+  server.close()
+  console.log('Server closed')
+}
+
+export { app, closeServer }
