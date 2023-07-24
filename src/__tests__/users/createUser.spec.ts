@@ -30,13 +30,29 @@ describe('Test for creating a user', () => {
     expect(response.status).toBe(201)
   })
 
+  it('should create a new user and return status 400', async () => {
+    const userData: IUserCreate = {
+      name: '',
+      image: 'https://avatars.githubusercontent.com/u/123456789?v=4',
+    }
+
+    const response = await request(app).post('/usuario').send(userData)
+    expect(response.status).toBe(400)
+  })
+
   it('should create a new user and return status 500', async () => {
-    const userData: any = {
+    jest
+      .spyOn(UserService.prototype, 'create')
+      .mockRejectedValue(new Error('Erro ao criar usuario.'))
+
+    const userData: IUserCreate = {
+      name: 'Teste',
       image: 'https://avatars.githubusercontent.com/u/123456789?v=4',
     }
 
     const response = await request(app).post('/usuario').send(userData)
     expect(response.status).toBe(500)
+    expect(response.body.err).toBe('Erro ao criar usuario.')
   })
 })
 afterAll(() => {
