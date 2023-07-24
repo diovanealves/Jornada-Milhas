@@ -3,6 +3,7 @@ import cors from 'cors'
 import 'dotenv/config'
 
 import userRoutes from './routes/UserRoutes'
+import testimonialRoutes from './routes/TestimonialRoutes'
 
 const PORT = process.env.PORT || 8888
 
@@ -16,6 +17,7 @@ app.use(
 )
 
 app.use(userRoutes)
+app.use(testimonialRoutes)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port: ${PORT}`)
