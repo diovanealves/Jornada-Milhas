@@ -35,4 +35,13 @@ export class TestimonialService {
 
     return TestimonialRepository.update(id, testimonialData)
   }
+
+  static async delete(id: string): Promise<ITestimonial | null> {
+    const existingTestimonial = await TestimonialRepository.getById(id)
+    if (!existingTestimonial) {
+      return null
+    }
+
+    return TestimonialRepository.delete(id)
+  }
 }

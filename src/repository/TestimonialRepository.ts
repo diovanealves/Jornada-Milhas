@@ -45,4 +45,8 @@ export class TestimonialRepository {
   ): Promise<ITestimonialUpdate> {
     return prisma.testimonial.update({ where: { id }, data: testimonialData })
   }
+
+  static async delete(id: string): Promise<ITestimonial | null> {
+    return prisma.testimonial.delete({ where: { id } })
+  }
 }

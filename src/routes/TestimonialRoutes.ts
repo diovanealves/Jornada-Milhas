@@ -62,4 +62,17 @@ router.put('/depoimentos/:id', async (req: Request, res: Response) => {
   }
 })
 
+router.delete('/depoimentos/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    const deletedTestimonial = await TestimonialService.delete(id)
+    if (!deletedTestimonial) {
+      return res.status(404).send('Depoimento não encontrado')
+    }
+    return res.json(deletedTestimonial)
+  } catch (err) {
+    return res.status(500).send('Erro ao deletar o depoimento')
+  }
+})
+
 export default router
