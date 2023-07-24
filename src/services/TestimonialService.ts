@@ -6,42 +6,48 @@ import {
 import { TestimonialRepository } from '../repository/TestimonialRepository'
 
 export class TestimonialService {
-  static async create(
+  private testimonialRepository: TestimonialRepository
+
+  constructor(testimonialRepository: TestimonialRepository) {
+    this.testimonialRepository = testimonialRepository
+  }
+
+  async create(
     testimonialData: ITestimonialCreate,
   ): Promise<ITestimonialCreate> {
-    return TestimonialRepository.create(testimonialData)
+    return this.testimonialRepository.create(testimonialData)
   }
 
-  static async getAll(): Promise<ITestimonial[]> {
-    return TestimonialRepository.getAll()
+  async getAll(): Promise<ITestimonial[]> {
+    return this.testimonialRepository.getAll()
   }
 
-  static async getById(id: string): Promise<ITestimonial | null> {
-    return TestimonialRepository.getById(id)
+  async getById(id: string): Promise<ITestimonial | null> {
+    return this.testimonialRepository.getById(id)
   }
 
-  static async getRandom(): Promise<ITestimonial[]> {
-    return TestimonialRepository.getRandom()
+  async getRandom(): Promise<ITestimonial[]> {
+    return this.testimonialRepository.getRandom()
   }
 
-  static async update(
+  async update(
     id: string,
     testimonialData: ITestimonialUpdate,
   ): Promise<ITestimonialUpdate | null> {
-    const existingTestimonial = await TestimonialRepository.getById(id)
+    const existingTestimonial = await this.getById(id)
     if (!existingTestimonial) {
       return null
     }
 
-    return TestimonialRepository.update(id, testimonialData)
+    return this.testimonialRepository.update(id, testimonialData)
   }
 
-  static async delete(id: string): Promise<ITestimonial | null> {
-    const existingTestimonial = await TestimonialRepository.getById(id)
+  async delete(id: string): Promise<ITestimonial | null> {
+    const existingTestimonial = await this.getById(id)
     if (!existingTestimonial) {
       return null
     }
 
-    return TestimonialRepository.delete(id)
+    return this.testimonialRepository.delete(id)
   }
 }

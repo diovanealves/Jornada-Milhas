@@ -2,36 +2,39 @@ import { IUser, IUserCreate, IUserUpdate } from '../models/User'
 import { UserRepository } from '../repository/UserRepository'
 
 export class UserService {
-  static async create(userData: IUserCreate): Promise<IUserCreate> {
-    return UserRepository.create(userData)
+  private userRepository: UserRepository
+
+  constructor(userRepository: UserRepository) {
+    this.userRepository = userRepository
   }
 
-  static async getAll(): Promise<IUser[]> {
-    return UserRepository.getAll()
+  async create(userData: IUserCreate): Promise<IUserCreate> {
+    return this.userRepository.create(userData)
   }
 
-  static async getById(id: string): Promise<IUser | null> {
-    return UserRepository.getById(id)
+  async getAll(): Promise<IUser[]> {
+    return this.userRepository.getAll()
   }
 
-  static async update(
-    id: string,
-    userData: IUserUpdate,
-  ): Promise<IUserUpdate | null> {
-    const existingUser = await UserRepository.getById(id)
+  async getById(id: string): Promise<IUser | null> {
+    return this.userRepository.getById(id)
+  }
+
+  async update(id: string, userData: IUserUpdate): Promise<IUserUpdate | null> {
+    const existingUser = await this.getById(id)
     if (!existingUser) {
       return null
     }
 
-    return UserRepository.update(id, userData)
+    return this.userRepository.update(id, userData)
   }
 
-  static async delete(id: string): Promise<IUser | null> {
-    const existingUser = await UserRepository.getById(id)
+  async delete(id: string): Promise<IUser | null> {
+    const existingUser = await this.getById(id)
     if (!existingUser) {
       return null
     }
 
-    return UserRepository.delete(id)
+    return this.userRepository.delete(id)
   }
 }

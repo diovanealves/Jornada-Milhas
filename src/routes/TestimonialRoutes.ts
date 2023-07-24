@@ -1,13 +1,16 @@
 import express, { Request, Response } from 'express'
 import { ITestimonialCreate, ITestimonialUpdate } from '../models/Testimonial'
 import { TestimonialService } from '../services/TestimonialService'
+import { TestimonialRepository } from '../repository/TestimonialRepository'
 
 const router = express.Router()
+const testimonialRepository = new TestimonialRepository()
+const testimonialService = new TestimonialService(testimonialRepository)
 
 router.post('/depoimentos', async (req: Request, res: Response) => {
   const testimonialData: ITestimonialCreate = req.body
   try {
-    const newTestimonial = await TestimonialService.create(testimonialData)
+    const newTestimonial = await testimonialService.create(testimonialData)
     return res.status(201).json(newTestimonial)
   } catch (err) {
     return res.status(500).send('Erro ao criar depoimento')
@@ -16,7 +19,7 @@ router.post('/depoimentos', async (req: Request, res: Response) => {
 
 router.get('/depoimentos', async (req: Request, res: Response) => {
   try {
-    const testimonials = await TestimonialService.getAll()
+    const testimonials = await testimonialService.getAll()
     return res.json(testimonials)
   } catch (err) {
     return res.status(500).send({ err: 'Erro ao obter os depoimentos' })
@@ -26,7 +29,7 @@ router.get('/depoimentos', async (req: Request, res: Response) => {
 router.get('/depoimentos/:id', async (req: Request, res: Response) => {
   const { id } = req.params
   try {
-    const testimonial = await TestimonialService.getById(id)
+    const testimonial = await testimonialService.getById(id)
     if (!testimonial) {
       return res.status(404).json({ err: 'Depoimento não encontrado' })
     }
@@ -38,7 +41,7 @@ router.get('/depoimentos/:id', async (req: Request, res: Response) => {
 
 router.get('/depoimentos-home', async (req: Request, res: Response) => {
   try {
-    const testimonials = await TestimonialService.getRandom()
+    const testimonials = await testimonialService.getRandom()
     return res.json(testimonials)
   } catch (err) {
     return res.status(500).json({ err: 'Erro ao obter os depoimentos' })
@@ -49,7 +52,7 @@ router.put('/depoimentos/:id', async (req: Request, res: Response) => {
   const { id } = req.params
   const testimonialData: ITestimonialUpdate = req.body
   try {
-    const updatedTestimonial = await TestimonialService.update(
+    const updatedTestimonial = await testimonialService.update(
       id,
       testimonialData,
     )
@@ -65,7 +68,7 @@ router.put('/depoimentos/:id', async (req: Request, res: Response) => {
 router.delete('/depoimentos/:id', async (req: Request, res: Response) => {
   const { id } = req.params
   try {
-    const deletedTestimonial = await TestimonialService.delete(id)
+    const deletedTestimonial = await testimonialService.delete(id)
     if (!deletedTestimonial) {
       return res.status(404).json({ err: 'Depoimento não encontrado' })
     }

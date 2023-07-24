@@ -6,7 +6,7 @@ import {
 } from '../models/Testimonial'
 
 export class TestimonialRepository {
-  static async create(
+  async create(
     testimonialData: ITestimonialCreate,
   ): Promise<ITestimonialCreate> {
     return prisma.testimonial.create({
@@ -14,20 +14,20 @@ export class TestimonialRepository {
     })
   }
 
-  static async getAll(): Promise<ITestimonial[]> {
+  async getAll(): Promise<ITestimonial[]> {
     return prisma.testimonial.findMany({
       include: { user: true },
     })
   }
 
-  static async getById(id: string): Promise<ITestimonial | null> {
+  async getById(id: string): Promise<ITestimonial | null> {
     return prisma.testimonial.findUnique({
       where: { id },
       include: { user: true },
     })
   }
 
-  static async getRandom(): Promise<ITestimonial[]> {
+  async getRandom(): Promise<ITestimonial[]> {
     return prisma.$queryRaw<ITestimonial[]>`
     SELECT
     T.*,
@@ -39,14 +39,17 @@ export class TestimonialRepository {
     `
   }
 
-  static async update(
+  async update(
     id: string,
     testimonialData: ITestimonialUpdate,
   ): Promise<ITestimonialUpdate> {
-    return prisma.testimonial.update({ where: { id }, data: testimonialData })
+    return prisma.testimonial.update({
+      where: { id },
+      data: testimonialData,
+    })
   }
 
-  static async delete(id: string): Promise<ITestimonial | null> {
+  async delete(id: string): Promise<ITestimonial | null> {
     return prisma.testimonial.delete({ where: { id } })
   }
 }
