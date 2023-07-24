@@ -2,12 +2,13 @@ import express, { Request, Response } from 'express'
 import { IUserCreate, IUserUpdate } from '../models/User'
 import { UserService } from '../services/UserService'
 import { UserRepository } from '../repository/UserRepository'
+import { ValidateUser } from '../middleware/ValidateUser'
 
 const router = express.Router()
 const userRepository = new UserRepository()
 const userService = new UserService(userRepository)
 
-router.post('/usuario', async (req: Request, res: Response) => {
+router.post('/usuario', ValidateUser, async (req: Request, res: Response) => {
   const userData: IUserCreate = req.body
   try {
     const newUser = await userService.create(userData)

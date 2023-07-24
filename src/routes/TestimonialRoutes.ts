@@ -2,20 +2,26 @@ import express, { Request, Response } from 'express'
 import { ITestimonialCreate, ITestimonialUpdate } from '../models/Testimonial'
 import { TestimonialService } from '../services/TestimonialService'
 import { TestimonialRepository } from '../repository/TestimonialRepository'
+import { ValidateTestimonial } from '../middleware/ValidateTestimonial'
 
 const router = express.Router()
 const testimonialRepository = new TestimonialRepository()
 const testimonialService = new TestimonialService(testimonialRepository)
 
-router.post('/depoimentos', async (req: Request, res: Response) => {
-  const testimonialData: ITestimonialCreate = req.body
-  try {
-    const newTestimonial = await testimonialService.create(testimonialData)
-    return res.status(201).json(newTestimonial)
-  } catch (err) {
-    return res.status(500).send('Erro ao criar depoimento')
-  }
-})
+router.post(
+  '/depoimentos',
+  ValidateTestimonial,
+  async (req: Request, res: Response) => {
+    const testimonialData: ITestimonialCreate = req.body
+
+    try {
+      const newTestimonial = await testimonialService.create(testimonialData)
+      return res.status(201).json(newTestimonial)
+    } catch (err) {
+      return res.status(500).send('Erro ao criar depoimento')
+    }
+  },
+)
 
 router.get('/depoimentos', async (req: Request, res: Response) => {
   try {
