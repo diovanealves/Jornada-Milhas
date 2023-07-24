@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { ITestimonialCreate } from '../models/Testimonial'
+import { ITestimonialCreate, ITestimonialUpdate } from '../models/Testimonial'
 import { TestimonialService } from '../services/TestimonialService'
 
 const router = express.Router()
@@ -42,6 +42,23 @@ router.get('/depoimentos-home', async (req: Request, res: Response) => {
     return res.json(testimonials)
   } catch (err) {
     return res.status(500).json({ err: 'Erro ao obter os depoimentos' })
+  }
+})
+
+router.put('/depoimentos/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+  const testimonialData: ITestimonialUpdate = req.body
+  try {
+    const updatedTestimonial = await TestimonialService.update(
+      id,
+      testimonialData,
+    )
+    if (!updatedTestimonial) {
+      return res.status(404).send('Depoimento não encontrado')
+    }
+    return res.json(updatedTestimonial)
+  } catch (err) {
+    return res.status(500).send('Erro ao atualizar o depoimento')
   }
 })
 

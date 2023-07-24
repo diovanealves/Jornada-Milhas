@@ -1,4 +1,8 @@
-import { ITestimonial, ITestimonialCreate } from '../models/Testimonial'
+import {
+  ITestimonial,
+  ITestimonialCreate,
+  ITestimonialUpdate,
+} from '../models/Testimonial'
 import { TestimonialRepository } from '../repository/TestimonialRepository'
 
 export class TestimonialService {
@@ -18,5 +22,17 @@ export class TestimonialService {
 
   static async getRandom(): Promise<ITestimonial[]> {
     return TestimonialRepository.getRandom()
+  }
+
+  static async update(
+    id: string,
+    testimonialData: ITestimonialUpdate,
+  ): Promise<ITestimonialUpdate | null> {
+    const existingTestimonial = await TestimonialRepository.getById(id)
+    if (!existingTestimonial) {
+      return null
+    }
+
+    return TestimonialRepository.update(id, testimonialData)
   }
 }
