@@ -14,6 +14,5 @@ export interface ITestimonialCreate {
 }
 
 export interface ITestimonialUpdate {
-  id: string
   description: string
 }
