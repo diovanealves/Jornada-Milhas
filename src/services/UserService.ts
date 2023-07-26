@@ -9,15 +9,15 @@ export class UserService {
   }
 
   async create(userData: IUserCreate): Promise<IUserCreate> {
-    return this.userRepository.create(userData)
+    return await this.userRepository.create(userData)
   }
 
   async getAll(): Promise<IUser[]> {
-    return this.userRepository.getAll()
+    return await this.userRepository.getAll()
   }
 
   async getById(id: string): Promise<IUser | null> {
-    return this.userRepository.getById(id)
+    return await this.userRepository.getById(id)
   }
 
   async update(id: string, userData: IUserUpdate): Promise<IUserUpdate | null> {
@@ -26,7 +26,7 @@ export class UserService {
       return null
     }
 
-    return this.userRepository.update(id, userData)
+    return await this.userRepository.update(id, userData)
   }
 
   async delete(id: string): Promise<IUser | null> {
@@ -35,6 +35,6 @@ export class UserService {
       return null
     }
 
-    return this.userRepository.delete(id)
+    return await this.userRepository.delete(id)
   }
 }

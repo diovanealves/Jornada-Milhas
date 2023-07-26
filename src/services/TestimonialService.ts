@@ -15,19 +15,19 @@ export class TestimonialService {
   async create(
     testimonialData: ITestimonialCreate,
   ): Promise<ITestimonialCreate> {
-    return this.testimonialRepository.create(testimonialData)
+    return await this.testimonialRepository.create(testimonialData)
   }
 
   async getAll(): Promise<ITestimonial[]> {
-    return this.testimonialRepository.getAll()
+    return await this.testimonialRepository.getAll()
   }
 
   async getById(id: string): Promise<ITestimonial | null> {
-    return this.testimonialRepository.getById(id)
+    return await this.testimonialRepository.getById(id)
   }
 
   async getRandom(): Promise<ITestimonial[]> {
-    return this.testimonialRepository.getRandom()
+    return await this.testimonialRepository.getRandom()
   }
 
   async update(
@@ -39,7 +39,7 @@ export class TestimonialService {
       return null
     }
 
-    return this.testimonialRepository.update(id, testimonialData)
+    return await this.testimonialRepository.update(id, testimonialData)
   }
 
   async delete(id: string): Promise<ITestimonial | null> {
@@ -48,6 +48,6 @@ export class TestimonialService {
       return null
     }
 
-    return this.testimonialRepository.delete(id)
+    return await this.testimonialRepository.delete(id)
   }
 }
