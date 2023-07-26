@@ -5,6 +5,10 @@ import { UserRepository } from '../../repository/UserRepository'
 import { UserService } from '../../services/UserService'
 
 describe('Test for creating a user', () => {
+  afterAll(() => {
+    closeServer()
+  })
+
   it('must create a user going through services and repository', async () => {
     const userData: IUserCreate = {
       name: 'Teste',
@@ -27,7 +31,10 @@ describe('Test for creating a user', () => {
     }
 
     const response = await request(app).post('/usuario').send(userData)
+
     expect(response.status).toBe(201)
+    expect(response.body.name).toBe(userData.name)
+    expect(response.body.image).toBe(userData.image)
   })
 
   it('should create a new user and return status 400', async () => {
@@ -40,7 +47,7 @@ describe('Test for creating a user', () => {
     expect(response.status).toBe(400)
   })
 
-  it('should create a new user and return status 500', async () => {
+  it('should return a 500 status when falling into the catch when trying to create a user', async () => {
     jest
       .spyOn(UserService.prototype, 'create')
       .mockRejectedValue(new Error('Erro ao criar usuario.'))
@@ -54,7 +61,4 @@ describe('Test for creating a user', () => {
     expect(response.status).toBe(500)
     expect(response.body.err).toBe('Erro ao criar usuario.')
   })
-})
-afterAll(() => {
-  closeServer()
 })
