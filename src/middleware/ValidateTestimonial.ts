@@ -35,7 +35,7 @@ export async function ValidateTestimonialExists(
     })
 
     if (!existingTestimonial) {
-      return res.status(400).json({ err: 'Depoimento não encontrado' })
+      return res.status(404).json({ err: 'Depoimento não encontrado' })
     }
 
     req.testimonial = existingTestimonial
