@@ -17,13 +17,20 @@ export class UserService {
   }
 
   async getById(id: string): Promise<IUser | null> {
-    return await this.userRepository.getById(id)
+    const existingUser = await this.userRepository.getById(id)
+
+    if (!existingUser) {
+      throw new Error('Usuário não encontrado')
+    }
+
+    return existingUser
   }
 
   async update(id: string, userData: IUserUpdate): Promise<IUserUpdate | null> {
     const existingUser = await this.getById(id)
+
     if (!existingUser) {
-      return null
+      throw new Error('Usuário não encontrado')
     }
 
     return await this.userRepository.update(id, userData)
@@ -31,8 +38,9 @@ export class UserService {
 
   async delete(id: string): Promise<IUser | null> {
     const existingUser = await this.getById(id)
+
     if (!existingUser) {
-      return null
+      throw new Error('Usuário não encontrado')
     }
 
     return await this.userRepository.delete(id)

@@ -23,7 +23,13 @@ export class TestimonialService {
   }
 
   async getById(id: string): Promise<ITestimonial | null> {
-    return await this.testimonialRepository.getById(id)
+    const existingTestimonial = await this.testimonialRepository.getById(id)
+
+    if (!existingTestimonial) {
+      throw new Error('Depoimento não encontrado')
+    }
+
+    return existingTestimonial
   }
 
   async getRandom(): Promise<ITestimonial[]> {
@@ -35,8 +41,9 @@ export class TestimonialService {
     testimonialData: ITestimonialUpdate,
   ): Promise<ITestimonialUpdate | null> {
     const existingTestimonial = await this.getById(id)
+
     if (!existingTestimonial) {
-      return null
+      throw new Error('Depoimento não encontrado')
     }
 
     return await this.testimonialRepository.update(id, testimonialData)
@@ -44,8 +51,9 @@ export class TestimonialService {
 
   async delete(id: string): Promise<ITestimonial | null> {
     const existingTestimonial = await this.getById(id)
+
     if (!existingTestimonial) {
-      return null
+      throw new Error('Depoimento não encontrado')
     }
 
     return await this.testimonialRepository.delete(id)

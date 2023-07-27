@@ -31,12 +31,13 @@ router.get('/usuario/:id', async (req: Request, res: Response) => {
   const { id } = req.params
   try {
     const user = await userService.getById(id)
-    if (!user) {
-      return res.status(404).json({ err: 'Usuário não encontrado' })
-    }
     return res.json(user)
   } catch (err) {
-    return res.status(500).json({ err: 'Erro ao obter o usuário' })
+    if ((err as Error).message === 'Usuário não encontrado') {
+      return res.status(404).json({ err: 'Usuário não encontrado' })
+    } else {
+      return res.status(500).json({ err: 'Erro ao obter o usuário específico' })
+    }
   }
 })
 
@@ -45,12 +46,13 @@ router.put('/usuario/:id', async (req: Request, res: Response) => {
   const userData: IUserUpdate = req.body
   try {
     const updatedUser = await userService.update(id, userData)
-    if (!updatedUser) {
-      return res.status(404).json({ err: 'Usuário não encontrado' })
-    }
     return res.json(updatedUser)
   } catch (err) {
-    return res.status(500).json({ err: 'Erro ao atualizar o usuário' })
+    if ((err as Error).message === 'Usuário não encontrado') {
+      return res.status(404).json({ err: 'Usuário não encontrado' })
+    } else {
+      return res.status(500).json({ err: 'Erro ao atualizar o usuário' })
+    }
   }
 })
 
@@ -58,12 +60,13 @@ router.delete('/usuario/:id', async (req: Request, res: Response) => {
   const { id } = req.params
   try {
     const deletedUser = await userService.delete(id)
-    if (!deletedUser) {
-      return res.status(404).json({ err: 'Usuário não encontrado' })
-    }
     return res.json(deletedUser)
   } catch (err) {
-    return res.status(500).json({ err: 'Erro ao deletar o usuário.' })
+    if ((err as Error).message === 'Usuário não encontrado') {
+      return res.status(404).json({ err: 'Usuário não encontrado' })
+    } else {
+      return res.status(500).json({ err: 'Erro ao deletar o usuário.' })
+    }
   }
 })
 

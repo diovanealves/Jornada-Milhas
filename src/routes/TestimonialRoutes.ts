@@ -18,7 +18,7 @@ router.post(
       const newTestimonial = await testimonialService.create(testimonialData)
       return res.status(201).json(newTestimonial)
     } catch (err) {
-      return res.status(500).send('Erro ao criar depoimento')
+      return res.status(500).json({ err: 'Erro ao criar depoimento' })
     }
   },
 )
@@ -36,12 +36,13 @@ router.get('/depoimentos/:id', async (req: Request, res: Response) => {
   const { id } = req.params
   try {
     const testimonial = await testimonialService.getById(id)
-    if (!testimonial) {
-      return res.status(404).json({ err: 'Depoimento não encontrado' })
-    }
     return res.json(testimonial)
   } catch (err) {
-    return res.status(500).json({ err: 'Erro ao obter o depoimento' })
+    if ((err as Error).message === 'Depoimento não encontrado') {
+      return res.status(404).json({ err: 'Depoimento não encontrado' })
+    } else {
+      return res.status(500).json({ err: 'Erro ao obter o depoimento' })
+    }
   }
 })
 
@@ -62,12 +63,13 @@ router.put('/depoimentos/:id', async (req: Request, res: Response) => {
       id,
       testimonialData,
     )
-    if (!updatedTestimonial) {
-      return res.status(404).json({ err: 'Depoimento não encontrado' })
-    }
     return res.json(updatedTestimonial)
   } catch (err) {
-    return res.status(500).json({ err: 'Erro ao atualizar o depoimento' })
+    if ((err as Error).message === 'Depoimento não encontrado') {
+      return res.status(404).json({ err: 'Depoimento não encontrado' })
+    } else {
+      return res.status(500).json({ err: 'Erro ao atualizar o depoimento' })
+    }
   }
 })
 
@@ -75,12 +77,13 @@ router.delete('/depoimentos/:id', async (req: Request, res: Response) => {
   const { id } = req.params
   try {
     const deletedTestimonial = await testimonialService.delete(id)
-    if (!deletedTestimonial) {
-      return res.status(404).json({ err: 'Depoimento não encontrado' })
-    }
     return res.json(deletedTestimonial)
   } catch (err) {
-    return res.status(500).json({ err: 'Erro ao deletar o depoimento' })
+    if ((err as Error).message === 'Depoimento não encontrado') {
+      return res.status(404).json({ err: 'Depoimento não encontrado' })
+    } else {
+      return res.status(500).json({ err: 'Erro ao deletar o depoimento' })
+    }
   }
 })
 
