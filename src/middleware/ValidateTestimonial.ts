@@ -46,3 +46,25 @@ export async function ValidateTestimonialExists(
       .json({ err: 'Erro ao verificar se o depoimento existe' })
   }
 }
+
+export async function ValidateTestimonialUpdate(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  const { description } = req.body
+
+  try {
+    const existingTestimonial = req.testimonial
+
+    if (!description || description.trim() === '') {
+      req.body.description = existingTestimonial?.description
+    }
+
+    next()
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ err: 'Erro ao validar os campos do depoimento' })
+  }
+}

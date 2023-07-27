@@ -5,6 +5,7 @@ import { TestimonialRepository } from '../repository/TestimonialRepository'
 import {
   ValidateTestimonialCreate,
   ValidateTestimonialExists,
+  ValidateTestimonialUpdate,
 } from '../middleware/ValidateTestimonial'
 
 const router = express.Router()
@@ -65,6 +66,7 @@ router.get('/depoimentos-home', async (req: Request, res: Response) => {
 router.put(
   '/depoimentos/:id',
   ValidateTestimonialExists,
+  ValidateTestimonialUpdate,
   async (req: Request, res: Response) => {
     const { id } = req.params
     const testimonialData: ITestimonialUpdate = req.body

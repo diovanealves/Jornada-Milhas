@@ -40,3 +40,27 @@ export async function ValidateUserExists(
       .json({ err: 'Erro ao verificar se o usuario existe' })
   }
 }
+
+export async function ValidateUserUpdate(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  const { name, image } = req.body
+
+  try {
+    const existingUser = req.user
+
+    if (!name || name.trim() === '') {
+      req.body.name = existingUser?.name
+    }
+
+    if (!image || image.trim() === '') {
+      req.body.image = existingUser?.image
+    }
+
+    next()
+  } catch (err) {
+    return res.status(500).json({ err: 'Erro ao validar os campos do usuario' })
+  }
+}

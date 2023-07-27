@@ -5,6 +5,7 @@ import { UserRepository } from '../repository/UserRepository'
 import {
   ValidateUserCreate,
   ValidateUserExists,
+  ValidateUserUpdate,
 } from '../middleware/ValidateUser'
 
 const router = express.Router()
@@ -51,6 +52,7 @@ router.get(
 router.put(
   '/usuario/:id',
   ValidateUserExists,
+  ValidateUserUpdate,
   async (req: Request, res: Response) => {
     const { id } = req.params
     const userData: IUserUpdate = req.body
