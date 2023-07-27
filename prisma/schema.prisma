@@ -15,9 +15,19 @@ model User {
 }
 
 model Testimonial {
-  id          String   @id @default(uuid())
-  userId      String
-  description String
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+  id           String         @id @default(uuid())
+  userId       String
+  description  String
+  createdAt    DateTime       @default(now())
+  user         User           @relation(fields: [userId], references: [id])
+  Destinations Destinations[]
+}
+
+model Destinations {
+  id            String       @id @default(uuid())
+  nome          String
+  price         Decimal      @db.Decimal(8, 2)
+  imagesUrl     String[]
+  testimonialId String?
+  testimonial   Testimonial? @relation(fields: [testimonialId], references: [id])
 }
