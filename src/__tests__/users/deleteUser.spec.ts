@@ -1,14 +1,16 @@
 import request from 'supertest'
+import 'dotenv/config'
 import { app, closeServer } from '../../server'
 import { UserService } from '../../services/UserService'
 
 describe('testing on user delete route', () => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const userId = process.env.JEST_DELETE_USER_ID!
   afterAll(() => {
     closeServer()
   })
 
   it('should return status 200 with the user being deleted', async () => {
-    const userId = 'fd994809-d0a1-4457-a976-eb8002a5acfc'
     const response = await request(app).delete(`/usuario/${userId}`)
 
     expect(response.status).toBe(200)
@@ -27,7 +29,6 @@ describe('testing on user delete route', () => {
       .spyOn(UserService.prototype, 'delete')
       .mockRejectedValue(new Error('Erro ao deletar o usuário.'))
 
-    const userId = 'fd994809-d0a1-4457-a976-eb8002a5acfc'
     const response = await request(app).delete(`/usuario/${userId}`)
 
     expect(response.status).toBe(500)

@@ -1,15 +1,17 @@
 import request from 'supertest'
+import 'dotenv/config'
 import { app, closeServer } from '../../server'
 import { ITestimonialUpdate } from '../../models/Testimonial'
 import { TestimonialService } from '../../services/TestimonialService'
 
 describe('testing the testimonial update route', () => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const testimonialId = process.env.JEST_GETBYID_UPDATE_TESTIMONIAL_ID!
   afterAll(() => {
     closeServer()
   })
 
   it('should return status 200 and update the testimonial', async () => {
-    const testimonialId = '13e770cf-f14a-4b73-8a74-49bc6e026126'
     const testimonialUpdateData: ITestimonialUpdate = {
       description: 'Update Test',
     }
@@ -41,7 +43,6 @@ describe('testing the testimonial update route', () => {
       .spyOn(TestimonialService.prototype, 'update')
       .mockRejectedValue(new Error('Erro ao atualizar o depoimento'))
 
-    const testimonialId = '13e770cf-f14a-4b73-8a74-49bc6e026126'
     const testimonialUpdateData: ITestimonialUpdate = {
       description: 'Update Test',
     }

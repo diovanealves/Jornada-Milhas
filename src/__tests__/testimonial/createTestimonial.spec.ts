@@ -1,10 +1,13 @@
 import request from 'supertest'
+import 'dotenv/config'
 import { app, closeServer } from '../../server'
 import { ITestimonialCreate } from '../../models/Testimonial'
 import { TestimonialRepository } from '../../repository/TestimonialRepository'
 import { TestimonialService } from '../../services/TestimonialService'
 
 describe('testing the testimonial creation route', () => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const userId = process.env.JEST_CREATE_TESTIMONIAL_USERID!
   afterAll(() => {
     closeServer()
   })
@@ -12,7 +15,7 @@ describe('testing the testimonial creation route', () => {
   it('must create a testimonial that traverses the services and the repository', async () => {
     const testimonialData: ITestimonialCreate = {
       description: 'Test',
-      userId: '4d31ad12-5fa7-4b90-b846-4d9d1d9c679f',
+      userId,
     }
 
     const testimonialRepository = new TestimonialRepository()
@@ -27,7 +30,7 @@ describe('testing the testimonial creation route', () => {
   it('should return status 201 with the registered testimonial', async () => {
     const testimonialData: ITestimonialCreate = {
       description: 'Test',
-      userId: '4d31ad12-5fa7-4b90-b846-4d9d1d9c679f',
+      userId,
     }
 
     const response = await request(app)
@@ -74,7 +77,7 @@ describe('testing the testimonial creation route', () => {
 
     const testimonialData: ITestimonialCreate = {
       description: 'Test',
-      userId: '4d31ad12-5fa7-4b90-b846-4d9d1d9c679f',
+      userId: 'c98b5e46-6761-48a0-a78d-3d917b1c0807',
     }
 
     const response = await request(app)

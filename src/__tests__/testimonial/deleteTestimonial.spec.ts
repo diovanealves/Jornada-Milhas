@@ -1,15 +1,16 @@
 import request from 'supertest'
+import 'dotenv/config'
 import { app, closeServer } from '../../server'
 import { TestimonialService } from '../../services/TestimonialService'
 
 describe('testing on testimonial delete route', () => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const testimonialId = process.env.JEST_DELETE_TESTIMONIAL_ID!
   afterAll(() => {
     closeServer()
   })
 
   it('should return status 200 with a testimonial being deleted', async () => {
-    const testimonialId = '02d8b436-39b5-4d55-bbbd-35e5b781b66b'
-
     const response = await request(app).delete(`/depoimentos/${testimonialId}`)
 
     expect(response.status).toBe(200)
@@ -28,8 +29,6 @@ describe('testing on testimonial delete route', () => {
     jest
       .spyOn(TestimonialService.prototype, 'delete')
       .mockRejectedValue(new Error('Erro ao deletar o depoimento'))
-
-    const testimonialId = '02d8b436-39b5-4d55-bbbd-35e5b781b66b'
 
     const response = await request(app).delete(`/depoimentos/${testimonialId}`)
 

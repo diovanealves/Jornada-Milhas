@@ -1,14 +1,16 @@
 import request from 'supertest'
+import 'dotenv/config'
 import { app, closeServer } from '../../server'
 import { TestimonialService } from '../../services/TestimonialService'
 
 describe('testing on routes by searching for user by id', () => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const testimonialId = process.env.JEST_GETBYID_UPDATE_TESTIMONIAL_ID!
   afterAll(() => {
     closeServer()
   })
 
   it('should return the status 200 and the testimonial data with that id', async () => {
-    const testimonialId = '13e770cf-f14a-4b73-8a74-49bc6e026126'
     const response = await request(app).get(`/depoimentos/${testimonialId}`)
 
     expect(response.status).toBe(200)
@@ -31,7 +33,6 @@ describe('testing on routes by searching for user by id', () => {
       .spyOn(TestimonialService.prototype, 'getById')
       .mockRejectedValue(new Error('Erro ao obter o depoimento'))
 
-    const testimonialId = '13e770cf-f14a-4b73-8a74-49bc6e026126'
     const response = await request(app).get(`/depoimentos/${testimonialId}`)
 
     expect(response.status).toBe(500)

@@ -1,15 +1,17 @@
 import request from 'supertest'
+import 'dotenv/config'
 import { app, closeServer } from '../../server'
 import { IUserUpdate } from '../../models/User'
 import { UserService } from '../../services/UserService'
 
 describe('testing the user update route', () => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const userId = process.env.JEST_GETBYID_UPDATE_USER_ID!
   afterAll(() => {
     closeServer()
   })
 
   it('should give status 200 and update the user', async () => {
-    const userId = '4d31ad12-5fa7-4b90-b846-4d9d1d9c679f'
     const userUpdateData: IUserUpdate = {
       name: 'Diovane Alves',
       image: 'https://avatars.githubusercontent.com/u/87160050?v=4',
@@ -44,7 +46,6 @@ describe('testing the user update route', () => {
       .spyOn(UserService.prototype, 'update')
       .mockRejectedValue(new Error('Erro ao atualizar o usuário'))
 
-    const userId = '4d31ad12-5fa7-4b90-b846-4d9d1d9c679f'
     const userUpdateData: IUserUpdate = {
       name: 'Diovane Alves',
       image: 'https://avatars.githubusercontent.com/u/87160050?v=4',
