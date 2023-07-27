@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
+import { ITestimonial } from '../models/Testimonial'
+import { prisma } from '../lib/prisma'
 
-export function ValidateTestimonial(
+type CustomRequest = Request & { testimonial?: ITestimonial }
+
+export function ValidateTestimonialCreate(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -16,4 +20,29 @@ export function ValidateTestimonial(
   }
 
   next()
+}
+
+export async function ValidateTestimonialExists(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  const { id } = req.params
+
+  try {
+    const existingTestimonial = await prisma.testimonial.findUnique({
+      where: { id },
+    })
+
+    if (!existingTestimonial) {
+      return res.status(400).json({ err: 'Depoimento não encontrado' })
+    }
+
+    req.testimonial = existingTestimonial
+    next()
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ err: 'Erro ao verificar se o depoimento existe' })
+  }
 }

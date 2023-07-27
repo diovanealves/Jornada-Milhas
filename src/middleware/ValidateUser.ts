@@ -1,6 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
+import { prisma } from '../lib/prisma'
+import { IUser } from '../models/User'
 
-export function ValidateUser(req: Request, res: Response, next: NextFunction) {
+type CustomRequest = Request & { user?: IUser }
+
+export function ValidateUserCreate(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const { name } = req.body
 
   if (!name || name.trim() === '') {
@@ -8,4 +16,27 @@ export function ValidateUser(req: Request, res: Response, next: NextFunction) {
   }
 
   next()
+}
+
+export async function ValidateUserExists(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  const { id } = req.params
+
+  try {
+    const existingUser = await prisma.user.findUnique({ where: { id } })
+
+    if (!existingUser) {
+      return res.status(404).json({ err: 'Usuário não encontrado' })
+    }
+
+    req.user = existingUser
+    next()
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ err: 'Erro ao verificar se o usuario existe' })
+  }
 }
