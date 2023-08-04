@@ -8,8 +8,8 @@ import { TestimonialRepository } from '../repository/TestimonialRepository'
 export class TestimonialService {
   private testimonialRepository: TestimonialRepository
 
-  constructor(testimonialRepository: TestimonialRepository) {
-    this.testimonialRepository = testimonialRepository
+  constructor() {
+    this.testimonialRepository = new TestimonialRepository()
   }
 
   async create(
