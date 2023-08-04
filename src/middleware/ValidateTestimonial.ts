@@ -55,10 +55,10 @@ export async function ValidateTestimonialUpdate(
   const { description } = req.body
 
   try {
-    const existingTestimonial = req.testimonial
-
     if (!description || description.trim() === '') {
-      req.body.description = existingTestimonial?.description
+      return res.status(400).json({
+        err: 'E necessário enviar a descrição para atualizar o depoimento',
+      })
     }
 
     next()
