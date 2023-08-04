@@ -51,6 +51,12 @@ export async function ValidateUserUpdate(
   try {
     const existingUser = req.user
 
+    if (name.trim() === '' && image.trim() === '') {
+      return res.status(400).json({
+        err: 'E necessários enviar pelo menos um campo para atualizar o usuário',
+      })
+    }
+
     if (!name || name.trim() === '') {
       req.body.name = existingUser?.name
     }
