@@ -4,6 +4,7 @@ import 'dotenv/config'
 
 import userRoutes from './routes/UserRoutes'
 import testimonialRoutes from './routes/TestimonialRoutes'
+import destinationRoutes from './routes/DestinationRoutes'
 
 const PORT = process.env.PORT || 8888
 
@@ -18,6 +19,7 @@ app.use(
 
 app.use(userRoutes)
 app.use(testimonialRoutes)
+app.use(destinationRoutes)
 
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server is running on port: ${PORT}`)
