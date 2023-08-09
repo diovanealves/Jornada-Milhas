@@ -10,7 +10,7 @@ export const IDestinationCreate = yup.object({
     .array()
     .of(yup.string().url('Cada item em imagem deve ser uma URL válida'))
     .required('O campo imagesUrl é obrigatório'),
-  testimonialId: yup.string().notRequired(),
+  testimonials: yup.array().of(yup.string().trim()).notRequired(),
 })
 
 export const IDestinatioUpdate = yup.object({

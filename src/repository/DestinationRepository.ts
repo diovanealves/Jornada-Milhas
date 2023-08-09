@@ -3,34 +3,47 @@ import { prisma } from '../lib/prisma'
 
 export class DestinationRepository {
   async create(destinationData: Destinations): Promise<Destinations> {
+    const { testimonials, ...destination } = destinationData
+
     return await prisma.destinations.create({
-      data: destinationData,
+      data: {
+        ...destination,
+        testimonials: {
+          connect: testimonials?.map((testimonialId: string) => ({
+            id: testimonialId,
+          })),
+        },
+      },
     })
   }
 
   async getAll(): Promise<Destinations[]> {
-    return await prisma.destinations.findMany({
-      include: {
-        testimonial: {
-          include: {
-            user: true,
-          },
-        },
-      },
-    })
+    return await prisma.destinations.findMany()
   }
 
   async getById(id: string): Promise<Destinations | null> {
-    return await prisma.destinations.findUnique({
+    const destination = await prisma.destinations.findUnique({
       where: { id },
-      include: {
-        testimonial: {
-          include: {
-            user: true,
-          },
-        },
+    })
+
+    if (!destination) {
+      return null
+    }
+
+    const testimonials = await prisma.testimonial.findMany({
+      where: {
+        destinations: { some: { id } },
       },
     })
+
+    const destinationWithTestimonials = {
+      ...destination,
+      testimonials,
+    }
+
+    console.log(testimonials)
+
+    return destinationWithTestimonials
   }
 
   async update(
