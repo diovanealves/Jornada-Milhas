@@ -1,11 +1,8 @@
 import { Request, Response } from 'express'
-import * as yup from 'yup'
+import { ValidationError } from 'yup'
 import { DestinationService } from '../services/DestinationService'
 import { IDestinatioUpdate, IDestinationCreate } from '../models/Destination'
-
-const idSchema = yup.object({
-  id: yup.string().uuid('Precisa ser um ID válido').required(),
-})
+import { idSchema } from '../models/Id'
 
 export default class DestinationController {
   private destinationService: DestinationService
@@ -27,7 +24,7 @@ export default class DestinationController {
       )
       return res.status(201).json(newDestination)
     } catch (err) {
-      if (err instanceof yup.ValidationError) {
+      if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
       }
       return res.status(500).json({ err: 'Erro ao criar destino' })
@@ -51,7 +48,7 @@ export default class DestinationController {
       const destination = await this.destinationService.getById(id)
       return res.json(destination)
     } catch (err) {
-      if (err instanceof yup.ValidationError) {
+      if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
       } else if (err instanceof Error) {
         return res.status(404).json({ err: err.message })
@@ -76,7 +73,7 @@ export default class DestinationController {
 
       return res.json(destination)
     } catch (err) {
-      if (err instanceof yup.ValidationError) {
+      if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
       }
       return res.status(500).json({ err: 'Erro ao atualizar depoimento' })
@@ -91,7 +88,7 @@ export default class DestinationController {
       const destination = await this.destinationService.delete(id)
       return res.json(destination)
     } catch (err) {
-      if (err instanceof yup.ValidationError) {
+      if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
       } else if (err instanceof Error) {
         return res.status(404).json({ err: err.message })

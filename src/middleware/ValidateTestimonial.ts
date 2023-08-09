@@ -1,68 +1,34 @@
 import { Request, Response, NextFunction } from 'express'
-import { ITestimonial } from '../models/Testimonial'
 import { prisma } from '../lib/prisma'
+import { idSchema } from '../models/Id'
+import { ValidationError } from 'yup'
 
-type CustomRequest = Request & { testimonial?: ITestimonial }
-
-export function ValidateTestimonialCreate(
+export async function ValidateTestimonialUpdate(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  const { description, userId } = req.body
-
-  if (!description || description.trim() === '') {
-    return res.status(400).json({ err: 'O campo Descrição e obrigatório' })
-  }
-
-  if (!userId || userId.trim() === '') {
-    return res.status(400).json({ err: 'O campo userId e obrigatório' })
-  }
-
-  next()
-}
-
-export async function ValidateTestimonialExists(
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) {
   const { id } = req.params
-
-  try {
-    const existingTestimonial = await prisma.testimonial.findUnique({
-      where: { id },
-    })
-
-    if (!existingTestimonial) {
-      return res.status(404).json({ err: 'Depoimento não encontrado' })
-    }
-
-    req.testimonial = existingTestimonial
-    next()
-  } catch (err) {
-    return res
-      .status(500)
-      .json({ err: 'Erro ao verificar se o depoimento existe' })
-  }
-}
-
-export async function ValidateTestimonialUpdate(
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) {
   const { description } = req.body
 
   try {
+    await idSchema.validate({ id })
+
+    const testimonial = await prisma.testimonial.findUnique({ where: { id } })
+
+    if (!testimonial) {
+      return res.status(404).json({ err: 'Depoimento não encontrado' })
+    }
+
     if (!description || description.trim() === '') {
-      return res.status(400).json({
-        err: 'E necessário enviar a descrição para atualizar o depoimento',
-      })
+      return res.status(400).json({ err: 'A descrição é obrigatória' })
     }
 
     next()
   } catch (err) {
+    if (err instanceof ValidationError) {
+      return res.status(400).json({ err: err.errors })
+    }
     return res
       .status(500)
       .json({ err: 'Erro ao validar os campos do depoimento' })

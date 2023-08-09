@@ -1,15 +1,17 @@
-export interface IUser {
-  id: string
-  name: string
-  image: string
-}
+import * as yup from 'yup'
 
-export interface IUserCreate {
-  name: string
-  image: string
-}
+export const IUserCreate = yup.object({
+  name: yup
+    .string()
+    .required('O campo Nome e obrigatório')
+    .min(7, 'Nome precisa ter no mínimo 7 caracteres'),
+  image: yup.string().notRequired().url('A foto precisa ser uma URL'),
+})
 
-export interface IUserUpdate {
-  name?: string
-  image?: string
-}
+export const IUserUpdate = yup.object({
+  name: yup
+    .string()
+    .notRequired()
+    .min(7, 'Nome precisa ter no mínimo 7 caracteres'),
+  image: yup.string().notRequired().url('A foto precisa ser uma URL'),
+})

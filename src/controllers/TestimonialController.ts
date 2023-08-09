@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
+import { ValidationError } from 'yup'
 import { TestimonialService } from '../services/TestimonialService'
 import { ITestimonialCreate, ITestimonialUpdate } from '../models/Testimonial'
+import { idSchema } from '../models/Id'
 
 export default class TestimonialController {
   private testimonialService: TestimonialService
@@ -10,14 +12,22 @@ export default class TestimonialController {
   }
 
   async create(req: Request, res: Response) {
-    const testimonialData: ITestimonialCreate = req.body
+    const testimonialData = req.body
 
     try {
+      await ITestimonialCreate.validate(testimonialData, {
+        stripUnknown: true,
+        abortEarly: true,
+      })
+
       const newTestimonial = await this.testimonialService.create(
         testimonialData,
       )
       return res.status(201).json(newTestimonial)
     } catch (err) {
+      if (err instanceof ValidationError) {
+        return res.status(400).json({ err: err.errors })
+      }
       return res.status(500).json({ err: 'Erro ao criar depoimento' })
     }
   }
@@ -34,9 +44,16 @@ export default class TestimonialController {
   async getById(req: Request, res: Response) {
     const { id } = req.params
     try {
+      await idSchema.validate({ id })
+
       const testimonial = await this.testimonialService.getById(id)
       return res.json(testimonial)
     } catch (err) {
+      if (err instanceof ValidationError) {
+        return res.status(400).json({ err: err.errors })
+      } else if (err instanceof Error) {
+        return res.status(404).json({ err: err.message })
+      }
       return res.status(500).json({ err: 'Erro ao obter o depoimento' })
     }
   }
@@ -52,14 +69,22 @@ export default class TestimonialController {
 
   async update(req: Request, res: Response) {
     const { id } = req.params
-    const testimonialData: ITestimonialUpdate = req.body
+    const testimonialData = req.body
     try {
+      await ITestimonialUpdate.validate(testimonialData, {
+        stripUnknown: true,
+        abortEarly: true,
+      })
+
       const updatedTestimonial = await this.testimonialService.update(
         id,
         testimonialData,
       )
       return res.json(updatedTestimonial)
     } catch (err) {
+      if (err instanceof ValidationError) {
+        return res.status(400).json({ err: err.errors })
+      }
       return res.status(500).json({ err: 'Erro ao atualizar o depoimento' })
     }
   }
@@ -67,10 +92,22 @@ export default class TestimonialController {
   async delete(req: Request, res: Response) {
     const { id } = req.params
     try {
+      await idSchema.validate({ id })
+
       const deletedTestimonial = await this.testimonialService.delete(id)
+
+      if (!deletedTestimonial) {
+        throw new Error('Depoimento não encontrado')
+      }
+
       return res.json(deletedTestimonial)
     } catch (err) {
-      return res.status(500).json({ err: 'Erro ao deletar o depoimento' })
+      if (err instanceof ValidationError) {
+        return res.status(400).json({ err: err.errors })
+      } else if (err instanceof Error) {
+        return res.status(404).json({ err: err.message })
+      }
+      return res.status(500).json({ err: 'Erro ao obter o depoimento' })
     }
   }
 }
