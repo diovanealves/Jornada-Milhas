@@ -1,10 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
+import { ValidationError } from 'yup'
 import { prisma } from '../lib/prisma'
-import * as yup from 'yup'
-
-const idSchema = yup.object({
-  id: yup.string().uuid('Precisa ser um ID válido').required(),
-})
+import { idSchema } from '../models/Id'
 
 export async function ValidateDestinationUpdate(
   req: Request,
@@ -13,6 +10,12 @@ export async function ValidateDestinationUpdate(
 ) {
   const { id } = req.params
   const { name, price, imagesUrl } = req.body
+
+  if (!name && !price && imagesUrl.length === 0) {
+    return res.status(400).json({
+      err: 'Pelo menos um campo precisa ser preenchido para atualizar o destino',
+    })
+  }
 
   try {
     await idSchema.validate({ id })
@@ -31,7 +34,7 @@ export async function ValidateDestinationUpdate(
 
     next()
   } catch (err) {
-    if (err instanceof yup.ValidationError) {
+    if (err instanceof ValidationError) {
       return res.status(400).json({ err: err.errors })
     }
     return res.status(500).json({ err: 'Erro ao atualizar destino' })
