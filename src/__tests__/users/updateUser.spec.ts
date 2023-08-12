@@ -112,7 +112,7 @@ describe('testing the user update route', () => {
     expect(response.body.err).toBe('Usuário não encontrado')
   })
 
-  it('should return status 500 when not sending in the request the name and image ', async () => {
+  it('should return status 500 when not sending in the request the name and image', async () => {
     const response = await request(app).put(`/usuario/${userId}`).send()
 
     expect(response.status).toBe(500)

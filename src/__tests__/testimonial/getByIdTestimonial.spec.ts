@@ -20,8 +20,16 @@ describe('testing on routes by searching for user by id', () => {
     expect(response.body).toHaveProperty('user')
   })
 
+  it('should return status 400 with invalid UUID', async () => {
+    const testimonialId = 'cdef731c'
+    const response = await request(app).get(`/depoimentos/${testimonialId}`)
+
+    expect(response.status).toBe(400)
+    expect(response.body.err).toEqual(['Precisa ser um ID válido'])
+  })
+
   it('should return a 404 error when fetching a testimonial with invalid id', async () => {
-    const testimonialId = 'f548aeeb'
+    const testimonialId = 'cdef731c-0b98-481a-8064-764aa72f00c3'
     const response = await request(app).get(`/depoimentos/${testimonialId}`)
 
     expect(response.status).toBe(404)

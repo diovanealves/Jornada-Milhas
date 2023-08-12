@@ -1,8 +1,6 @@
 import request from 'supertest'
 import 'dotenv/config'
 import { app, closeServer } from '../../server'
-import { ITestimonialCreate } from '../../models/Testimonial'
-import { TestimonialRepository } from '../../repository/TestimonialRepository'
 import { TestimonialService } from '../../services/TestimonialService'
 
 describe('testing the testimonial creation route', () => {
@@ -13,13 +11,14 @@ describe('testing the testimonial creation route', () => {
   })
 
   it('must create a testimonial that traverses the services and the repository', async () => {
-    const testimonialData: ITestimonialCreate = {
+    const testimonialData = {
+      id: '',
       description: 'Test',
       userId,
+      createdAt: new Date(),
     }
 
-    const testimonialRepository = new TestimonialRepository()
-    const testimonialService = new TestimonialService(testimonialRepository)
+    const testimonialService = new TestimonialService()
 
     const createdTestimonial = await testimonialService.create(testimonialData)
 
@@ -28,8 +27,8 @@ describe('testing the testimonial creation route', () => {
   })
 
   it('should return status 201 with the registered testimonial', async () => {
-    const testimonialData: ITestimonialCreate = {
-      description: 'Test',
+    const testimonialData = {
+      description: 'Test Created',
       userId,
     }
 
@@ -43,9 +42,9 @@ describe('testing the testimonial creation route', () => {
   })
 
   it('should return status 400 with empty description field', async () => {
-    const testimonialData: ITestimonialCreate = {
+    const testimonialData = {
       description: '',
-      userId: '4d31ad12-5fa7-4b90-b846-4d9d1d9c679f',
+      userId,
     }
 
     const response = await request(app)
@@ -53,12 +52,31 @@ describe('testing the testimonial creation route', () => {
       .send(testimonialData)
 
     expect(response.status).toBe(400)
-    expect(response.body.err).toBe('O campo Descrição e obrigatório')
+    expect(response.body.err).toEqual([
+      'O Campo Descrição e Obrigatório',
+      'Descrição precisa ter mais de 5 caracteres',
+    ])
+  })
+
+  it('should return status 400 saying that the description needs to be at least 5 characters long', async () => {
+    const testimonialData = {
+      description: 'test',
+      userId,
+    }
+
+    const response = await request(app)
+      .post('/depoimentos')
+      .send(testimonialData)
+
+    expect(response.status).toBe(400)
+    expect(response.body.err).toEqual([
+      'Descrição precisa ter mais de 5 caracteres',
+    ])
   })
 
   it('should return status 400 with empty userId field', async () => {
-    const testimonialData: ITestimonialCreate = {
-      description: 'Test',
+    const testimonialData = {
+      description: 'Test Created',
       userId: '',
     }
 
@@ -67,7 +85,24 @@ describe('testing the testimonial creation route', () => {
       .send(testimonialData)
 
     expect(response.status).toBe(400)
-    expect(response.body.err).toBe('O campo userId e obrigatório')
+    expect(response.body.err).toEqual([
+      'Esse depoimento precisa esta relacionada com um usuário',
+      'Precisa ser um ID válido',
+    ])
+  })
+
+  it('should return a 404 status if the user does not exist', async () => {
+    const testimonialData = {
+      description: 'test created',
+      userId: 'cdef731c-0b98-481a-8064-764aa72f00c3',
+    }
+
+    const response = await request(app)
+      .post('/depoimentos')
+      .send(testimonialData)
+
+    expect(response.status).toBe(404)
+    expect(response.body.err).toEqual('Usuário não encontrado')
   })
 
   it('should return a 500 status when falling into the catch when trying to create a testimonial', async () => {
@@ -75,9 +110,9 @@ describe('testing the testimonial creation route', () => {
       .spyOn(TestimonialService.prototype, 'create')
       .mockRejectedValue(new Error('Erro ao criar depoimento'))
 
-    const testimonialData: ITestimonialCreate = {
-      description: 'Test',
-      userId: 'c98b5e46-6761-48a0-a78d-3d917b1c0807',
+    const testimonialData = {
+      description: 'Test Created',
+      userId,
     }
 
     const response = await request(app)

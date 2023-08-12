@@ -1,7 +1,6 @@
 import request from 'supertest'
 import 'dotenv/config'
 import { app, closeServer } from '../../server'
-import { ITestimonialUpdate } from '../../models/Testimonial'
 import { TestimonialService } from '../../services/TestimonialService'
 
 describe('testing the testimonial update route', () => {
@@ -12,7 +11,7 @@ describe('testing the testimonial update route', () => {
   })
 
   it('should return status 200 and update the testimonial', async () => {
-    const testimonialUpdateData: ITestimonialUpdate = {
+    const testimonialUpdateData = {
       description: 'Update Test',
     }
 
@@ -24,9 +23,45 @@ describe('testing the testimonial update route', () => {
     expect(response.body.description).toBe(testimonialUpdateData.description)
   })
 
+  it('should return status 400 with invalid UUID', async () => {
+    const testimonialId = 'cdef731c'
+    const response = await request(app).get(`/depoimentos/${testimonialId}`)
+
+    expect(response.status).toBe(400)
+    expect(response.body.err).toEqual(['Precisa ser um ID válido'])
+  })
+
+  it('should return status 400 when sending an empty description', async () => {
+    const testimonialUpdateData = {
+      description: '',
+    }
+
+    const response = await request(app)
+      .put(`/depoimentos/${testimonialId}`)
+      .send(testimonialUpdateData)
+
+    expect(response.status).toBe(400)
+    expect(response.body.err).toBe('A descrição é obrigatória')
+  })
+
+  it('should return status 400 when submitting a description with less than 5 characters', async () => {
+    const testimonialUpdateData = {
+      description: 'Test',
+    }
+
+    const response = await request(app)
+      .put(`/depoimentos/${testimonialId}`)
+      .send(testimonialUpdateData)
+
+    expect(response.status).toBe(400)
+    expect(response.body.err).toEqual([
+      'Descrição precisa ter mais de 5 caracteres',
+    ])
+  })
+
   it('should return 404 status when trying to update the testimonial with an invalid id', async () => {
-    const testimonialId = '13e770cf'
-    const testimonialUpdateData: ITestimonialUpdate = {
+    const testimonialId = 'cdef731c-0b98-481a-8064-764aa72f00c3'
+    const testimonialUpdateData = {
       description: 'Update Test',
     }
 
@@ -43,7 +78,7 @@ describe('testing the testimonial update route', () => {
       .spyOn(TestimonialService.prototype, 'update')
       .mockRejectedValue(new Error('Erro ao atualizar o depoimento'))
 
-    const testimonialUpdateData: ITestimonialUpdate = {
+    const testimonialUpdateData = {
       description: 'Update Test',
     }
 

@@ -16,8 +16,16 @@ describe('testing on testimonial delete route', () => {
     expect(response.status).toBe(200)
   })
 
+  it('should return status 400 with invalid UUID', async () => {
+    const testimonialId = 'cdef731c'
+    const response = await request(app).delete(`/depoimentos/${testimonialId}`)
+
+    expect(response.status).toBe(400)
+    expect(response.body.err).toEqual(['Precisa ser um ID válido'])
+  })
+
   it('should return 404 status with trying to delete a testimonial with an invalid ID', async () => {
-    const testimonialId = '02d8b436'
+    const testimonialId = 'cdef731c-0b98-481a-8064-764aa72f00c3'
 
     const response = await request(app).delete(`/depoimentos/${testimonialId}`)
 
