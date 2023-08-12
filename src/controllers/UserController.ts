@@ -16,7 +16,7 @@ export default class UserController {
     try {
       await IUserCreate.validate(userData, {
         stripUnknown: true,
-        abortEarly: true,
+        abortEarly: false,
       })
 
       const newUser = await this.userService.create(userData)
@@ -48,7 +48,10 @@ export default class UserController {
     } catch (err) {
       if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
-      } else if (err instanceof Error) {
+      } else if (
+        err instanceof Error &&
+        err.message === 'Usuário não encontrado'
+      ) {
         return res.status(404).json({ err: err.message })
       }
       return res.status(500).json({ err: 'Erro ao obter o usuário específico' })
@@ -61,7 +64,7 @@ export default class UserController {
     try {
       await IUserUpdate.validate(userData, {
         stripUnknown: true,
-        abortEarly: true,
+        abortEarly: false,
       })
 
       const updatedUser = await this.userService.update(id, userData)
@@ -84,7 +87,10 @@ export default class UserController {
     } catch (err) {
       if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
-      } else if (err instanceof Error) {
+      } else if (
+        err instanceof Error &&
+        err.message === 'Usuário não encontrado'
+      ) {
         return res.status(404).json({ err: err.message })
       }
       return res.status(500).json({ err: 'Erro ao deletar o usuário.' })

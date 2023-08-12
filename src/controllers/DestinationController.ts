@@ -16,7 +16,7 @@ export default class DestinationController {
     try {
       await IDestinationCreate.validate(destinationData, {
         stripUnknown: true,
-        abortEarly: true,
+        abortEarly: false,
       })
 
       const newDestination = await this.destinationService.create(
@@ -50,7 +50,10 @@ export default class DestinationController {
     } catch (err) {
       if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
-      } else if (err instanceof Error) {
+      } else if (
+        err instanceof Error &&
+        err.message === 'Destino não encontrado'
+      ) {
         return res.status(404).json({ err: err.message })
       }
       return res.status(500).json({ err: 'Erro ao obter destino' })
@@ -63,7 +66,7 @@ export default class DestinationController {
     try {
       await IDestinatioUpdate.validate(destinationData, {
         abortEarly: true,
-        stripUnknown: true,
+        stripUnknown: false,
       })
 
       const destination = await this.destinationService.update(
@@ -90,7 +93,10 @@ export default class DestinationController {
     } catch (err) {
       if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
-      } else if (err instanceof Error) {
+      } else if (
+        err instanceof Error &&
+        err.message === 'Destino não encontrado'
+      ) {
         return res.status(404).json({ err: err.message })
       }
       return res.status(500).json({ err: 'Erro ao deletar destino' })

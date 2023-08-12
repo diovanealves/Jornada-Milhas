@@ -17,7 +17,7 @@ export default class TestimonialController {
     try {
       await ITestimonialCreate.validate(testimonialData, {
         stripUnknown: true,
-        abortEarly: true,
+        abortEarly: false,
       })
 
       const newTestimonial = await this.testimonialService.create(
@@ -51,7 +51,10 @@ export default class TestimonialController {
     } catch (err) {
       if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
-      } else if (err instanceof Error) {
+      } else if (
+        err instanceof Error &&
+        err.message === 'Depoimento não encontrado'
+      ) {
         return res.status(404).json({ err: err.message })
       }
       return res.status(500).json({ err: 'Erro ao obter o depoimento' })
@@ -73,7 +76,7 @@ export default class TestimonialController {
     try {
       await ITestimonialUpdate.validate(testimonialData, {
         stripUnknown: true,
-        abortEarly: true,
+        abortEarly: false,
       })
 
       const updatedTestimonial = await this.testimonialService.update(
@@ -95,16 +98,14 @@ export default class TestimonialController {
       await idSchema.validate({ id })
 
       const deletedTestimonial = await this.testimonialService.delete(id)
-
-      if (!deletedTestimonial) {
-        throw new Error('Depoimento não encontrado')
-      }
-
       return res.json(deletedTestimonial)
     } catch (err) {
       if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
-      } else if (err instanceof Error) {
+      } else if (
+        err instanceof Error &&
+        err.message === 'Depoimento não encontrado'
+      ) {
         return res.status(404).json({ err: err.message })
       }
       return res.status(500).json({ err: 'Erro ao obter o depoimento' })
