@@ -27,6 +27,11 @@ export default class TestimonialController {
     } catch (err) {
       if (err instanceof ValidationError) {
         return res.status(400).json({ err: err.errors })
+      } else if (
+        err instanceof Error &&
+        err.message === 'Usuário não encontrado'
+      ) {
+        return res.status(404).json({ err: err.message })
       }
       return res.status(500).json({ err: 'Erro ao criar depoimento' })
     }
@@ -108,7 +113,7 @@ export default class TestimonialController {
       ) {
         return res.status(404).json({ err: err.message })
       }
-      return res.status(500).json({ err: 'Erro ao obter o depoimento' })
+      return res.status(500).json({ err: 'Erro ao deletar o depoimento' })
     }
   }
 }

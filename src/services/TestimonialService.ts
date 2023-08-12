@@ -1,14 +1,19 @@
 import { Testimonial } from '@prisma/client'
+import { UserService } from './UserService'
 import { TestimonialRepository } from '../repository/TestimonialRepository'
 
 export class TestimonialService {
+  private userService: UserService
   private testimonialRepository: TestimonialRepository
 
   constructor() {
     this.testimonialRepository = new TestimonialRepository()
+    this.userService = new UserService()
   }
 
   async create(testimonialData: Testimonial): Promise<Testimonial> {
+    await this.userService.getById(testimonialData.userId)
+
     return await this.testimonialRepository.create(testimonialData)
   }
 
