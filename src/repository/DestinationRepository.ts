@@ -3,17 +3,8 @@ import { prisma } from '../lib/prisma'
 
 export class DestinationRepository {
   async create(destinationData: Destinations): Promise<Destinations> {
-    const { testimonials, ...destination } = destinationData
-
     return await prisma.destinations.create({
-      data: {
-        ...destination,
-        testimonials: {
-          connect: testimonials?.map((testimonialId: string) => ({
-            id: testimonialId,
-          })),
-        },
-      },
+      data: destinationData,
     })
   }
 
