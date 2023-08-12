@@ -4,7 +4,10 @@ import { prisma } from '../lib/prisma'
 export class TestimonialRepository {
   async create(testimonialData: Testimonial): Promise<Testimonial> {
     return await prisma.testimonial.create({
-      data: testimonialData,
+      data: {
+        description: testimonialData.description,
+        userId: testimonialData.userId,
+      },
     })
   }
 
