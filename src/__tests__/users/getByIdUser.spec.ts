@@ -18,12 +18,20 @@ describe('testing on routes by searching for user by id', () => {
     expect(response.body).toHaveProperty('image')
   })
 
+  it('Should return status 400, with UUID validation error', async () => {
+    const userId = 'cdef731c-0b98-481a-8064-764aa72f00c'
+    const response = await request(app).get(`/usuario/${userId}`)
+
+    expect(response.status).toBe(400)
+    expect(response.body.err).toEqual(['Precisa ser um ID válido'])
+  })
+
   it('should return a 404 error when fetching a user with invalid id', async () => {
-    const userId = 'fe6760e6'
+    const userId = 'cdef731c-0b98-481a-8064-764aa72f00c3'
     const response = await request(app).get(`/usuario/${userId}`)
 
     expect(response.status).toBe(404)
-    expect(response.body.err).toBe('Usuário não encontrado')
+    expect(response.body.err).toEqual('Usuário não encontrado')
   })
 
   it('should return a status 500 when falling into the catch when trying to return a tesminoial with an id', async () => {
@@ -34,6 +42,6 @@ describe('testing on routes by searching for user by id', () => {
     const response = await request(app).get(`/usuario/${userId}`)
 
     expect(response.status).toBe(500)
-    expect(response.body.err).toBe('Erro ao obter o usuário específico')
+    expect(response.body.err).toEqual('Erro ao obter o usuário específico')
   })
 })

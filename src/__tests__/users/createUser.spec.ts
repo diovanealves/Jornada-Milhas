@@ -1,7 +1,5 @@
 import request from 'supertest'
 import { app, closeServer } from '../../server'
-import { IUserCreate } from '../../models/User'
-import { UserRepository } from '../../repository/UserRepository'
 import { UserService } from '../../services/UserService'
 
 describe('Test for creating a user', () => {
@@ -10,13 +8,13 @@ describe('Test for creating a user', () => {
   })
 
   it('must create a user going through services and repository', async () => {
-    const userData: IUserCreate = {
-      name: 'Teste',
+    const userData = {
+      id: '',
+      name: 'Diovane Alves',
       image: 'https://avatars.githubusercontent.com/u/123456789?v=4',
     }
 
-    const userRepository = new UserRepository()
-    const userService = new UserService(userRepository)
+    const userService = new UserService()
 
     const createdUser = await userService.create(userData)
 
@@ -25,8 +23,8 @@ describe('Test for creating a user', () => {
   })
 
   it('should create a new user and return status 201', async () => {
-    const userData: IUserCreate = {
-      name: 'Teste',
+    const userData = {
+      name: 'Diovane Alves',
       image: 'https://avatars.githubusercontent.com/u/123456789?v=4',
     }
 
@@ -37,28 +35,62 @@ describe('Test for creating a user', () => {
     expect(response.body.image).toBe(userData.image)
   })
 
-  it('should create a new user and return status 400', async () => {
-    const userData: IUserCreate = {
+  it('must return status 400 with all YUP validation errors', async () => {
+    const userData = {
       name: '',
-      image: 'https://avatars.githubusercontent.com/u/123456789?v=4',
+      image: '',
+    }
+
+    const expectedErrors = [
+      'O campo Nome e obrigatório',
+      'Nome precisa ter no mínimo 7 caracteres',
+    ]
+    const response = await request(app).post('/usuario').send(userData)
+
+    expect(response.status).toBe(400)
+
+    expect(response.body.err).toEqual(expectedErrors)
+  })
+
+  it('It should return state 400, saying that the name needs to be at least 7 characters long', async () => {
+    const userData = {
+      name: 'Oi',
+      image: '',
     }
 
     const response = await request(app).post('/usuario').send(userData)
+
     expect(response.status).toBe(400)
+    expect(response.body.err).toEqual([
+      'Nome precisa ter no mínimo 7 caracteres',
+    ])
   })
 
-  it('should return a 500 status when falling into the catch when trying to create a user', async () => {
+  it('Must return status 400 saying that the image needs to be a URL', async () => {
+    const userData = {
+      name: 'Diovane Alves',
+      image: 'undefined',
+    }
+
+    const response = await request(app).post('/usuario').send(userData)
+
+    expect(response.status).toBe(400)
+    expect(response.body.err).toEqual(['A foto precisa ser uma URL'])
+  })
+
+  it('It should return status 500, having given an error on the server when creating the user', async () => {
     jest
       .spyOn(UserService.prototype, 'create')
       .mockRejectedValue(new Error('Erro ao criar usuario.'))
 
-    const userData: IUserCreate = {
-      name: 'Teste',
+    const userData = {
+      name: 'Diovane Alves',
       image: 'https://avatars.githubusercontent.com/u/123456789?v=4',
     }
 
     const response = await request(app).post('/usuario').send(userData)
+
     expect(response.status).toBe(500)
-    expect(response.body.err).toBe('Erro ao criar usuario.')
+    expect(response.body.err).toEqual('Erro ao criar usuario.')
   })
 })
